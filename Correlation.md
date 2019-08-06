@@ -2,6 +2,28 @@ Correlation
 ================
 Prof. Dr. Jan Kirenz
 
+``` r
+library(pander)
+library(tidyverse)
+```
+
+    ## ── Attaching packages ────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 3.2.0     ✔ purrr   0.3.2
+    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
+    ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
+    ## ✔ readr   1.3.1     ✔ forcats 0.4.0
+
+    ## ── Conflicts ───────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+``` r
+library(ggplot2)
+panderOptions('round',2)
+set.seed(1) 
+```
+
 # Introduction
 
 Correlation is a way of measuring the extent to which two variables are
@@ -291,7 +313,6 @@ converting a correlation value into a *t* statistic (the details are not
 important here).
 
 ``` r
-# perform correlation test on data
 cor.test(df$x,df$y) 
 ```
 
@@ -398,6 +419,17 @@ cor(dfOutlier$x, dfOutlier$y, method = "spearman")
 # Visualization of different relationships
 
 ``` r
+library(cowplot)
+```
+
+    ## 
+    ## Attaching package: 'cowplot'
+
+    ## The following object is masked from 'package:ggplot2':
+    ## 
+    ##     ggsave
+
+``` r
 par(mfrow=c(2,2))
 
 # Relationship one
@@ -421,7 +453,6 @@ p2 <- ggplot(dfTwo) +
   theme(plot.title = element_text(size = 12)) 
 
 # Relationship three
-
 dfThree <-
   tibble(x = round(rnorm(n = 100, mean = 10, sd = 3))) %>%
   mutate(y = 100 - 0.2*x - 0.2*x^2 - 0.1*x^5) #+ round(rnorm(n = 100, mean = 5, sd = 10)))
@@ -432,7 +463,6 @@ p3 <- ggplot(dfThree) +
   theme(plot.title = element_text(size = 12)) 
 
 # Relationship four
-
 dfFour <-
   tibble(x = round(rnorm(n = 100, mean = 0, sd = 10))) %>%
   mutate(y = 1 + 1*x - 0.2*x^2) #+ round(rnorm(n = 100, mean = 5, sd = 10)))
