@@ -8,7 +8,8 @@ output:
     fig_width: 5
     fig_height: 5
     html_preview: false
-    md_extensions: -tex_math_single_backslash
+    pandoc_args: --webtex
+ #   md_extensions: -tex_math_single_backslash
 #    md_extensions: +tex_math_dollars 
 #    includes:
 #      in_header: header.md

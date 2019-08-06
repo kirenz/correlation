@@ -36,7 +36,8 @@ purchased products from company `x` and company `y` in the last month.
   - *p* denotes the number of variables that are available in the
     dataset.
 
-  - \(x_{ij}\) represents the value of the j*th* variable for the i*th*
+  - ![x\_{ij}](https://latex.codecogs.com/png.latex?x_%7Bij%7D "x_{ij}")
+    represents the value of the j*th* variable for the i*th*
     observation, where i = 1, 2, . . ., n and j = 1, 2, . . . , p.
 
 -----
@@ -59,7 +60,9 @@ ggplot(df) +
 
 In this scatterplot, each person in the dataset is represented by a
 point in two-dimensional space. The coordinates of this point
-(\(x_{ij}\),\(y_{ij}\)) are the individual’s scores on variables x and y
+(![x\_{ij}](https://latex.codecogs.com/png.latex?x_%7Bij%7D
+"x_{ij}"),![y\_{ij}](https://latex.codecogs.com/png.latex?y_%7Bij%7D
+"y_{ij}")) are the individual’s scores on variables x and y
 respectively.
 
 To get more information about the usage of scatterplots, review the
@@ -75,10 +78,15 @@ calculate the *covariance*, which basically is a number that reflects
 the degree to which two variables vary together.
 
 Covariance is closely related to the *variance* (also referred to as
-\(s^2\) or \(\sigma^2\)) of one variable. Remember, that the *variance*
-for a single variable is computed as:
+![s^2](https://latex.codecogs.com/png.latex?s%5E2 "s^2") or
+![\\sigma^2](https://latex.codecogs.com/png.latex?%5Csigma%5E2
+"\\sigma^2")) of one variable. Remember, that the *variance* for a
+single variable is computed as:
 
-\[s^2 = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})^2\]
+  
+![s^2 = \\frac{1}{(n-1)} \\sum\_{i=1}^n (x\_i -
+\\bar{x})^2](https://latex.codecogs.com/png.latex?s%5E2%20%3D%20%5Cfrac%7B1%7D%7B%28n-1%29%7D%20%5Csum_%7Bi%3D1%7D%5En%20%28x_i%20-%20%5Cbar%7Bx%7D%29%5E2
+"s^2 = \\frac{1}{(n-1)} \\sum_{i=1}^n (x_i - \\bar{x})^2")  
 
 The variance tells us how far the observations are spread out from their
 average value. Let’s obtain the variance of variable x and y for our
@@ -120,13 +128,19 @@ sprintf("variance of y  = %.2f", var_y)
 
     ## [1] "variance of y  = 31.70"
 
-In contrast to variance, the *covariance* (\(cov_{XY}\)) tells us
-whether there is a relation between the deviations of *two* different
-variables across observations. It is defined as:
+In contrast to variance, the *covariance*
+(![cov\_{XY}](https://latex.codecogs.com/png.latex?cov_%7BXY%7D
+"cov_{XY}")) tells us whether there is a relation between the deviations
+of *two* different variables across observations. It is defined as:
 
-\[
-covariance = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})
-\]
+  
+![
+covariance = \\frac{1}{(n-1)} \\sum\_{i=1}^n (x\_i - \\bar{x})(y\_i -
+\\bar{y})
+](https://latex.codecogs.com/png.latex?%0Acovariance%20%3D%20%5Cfrac%7B1%7D%7B%28n-1%29%7D%20%5Csum_%7Bi%3D1%7D%5En%20%28x_i%20-%20%5Cbar%7Bx%7D%29%28y_i%20-%20%5Cbar%7By%7D%29%0A
+"
+covariance = \\frac{1}{(n-1)} \\sum_{i=1}^n (x_i - \\bar{x})(y_i - \\bar{y})
+")  
 
 This value will be far from zero when x and y are both highly deviant
 from the mean:
@@ -167,10 +181,12 @@ sprintf("covariance: %.2f", covXY)
 
 Note that we don’t usually use the covariance to describe relationships
 between variables, because it strongly depends upon the standard
-deviation of the variables. For example, a value of \(cov_{XY}=1\) might
-reflect a high degree of correlation when the standard deviations are
-very small, but a low degree of correlation when the standard deviations
-are high (Howell, 2009). This makes the covariance hard to interpret.
+deviation of the variables. For example, a value of
+![cov\_{XY}=1](https://latex.codecogs.com/png.latex?cov_%7BXY%7D%3D1
+"cov_{XY}=1") might reflect a high degree of correlation when the
+standard deviations are very small, but a low degree of correlation when
+the standard deviations are high (Howell, 2009). This makes the
+covariance hard to interpret.
 
 -----
 
@@ -208,9 +224,14 @@ sprintf("standard deviation of y  = %.2f", sd_y)
 
 The correlation coefficient r is calculated as follows:
 
-\[
-r = \frac{covariance}{s_xs_y} = \frac{1}{(n-1)} \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{s_x s_y}
-\]
+  
+![
+r = \\frac{covariance}{s\_xs\_y} = \\frac{1}{(n-1)}
+\\frac{\\sum\_{i=1}^n (x\_i - \\bar{x})(y\_i - \\bar{y})}{s\_x s\_y}
+](https://latex.codecogs.com/png.latex?%0Ar%20%3D%20%5Cfrac%7Bcovariance%7D%7Bs_xs_y%7D%20%3D%20%5Cfrac%7B1%7D%7B%28n-1%29%7D%20%5Cfrac%7B%5Csum_%7Bi%3D1%7D%5En%20%28x_i%20-%20%5Cbar%7Bx%7D%29%28y_i%20-%20%5Cbar%7By%7D%29%7D%7Bs_x%20s_y%7D%0A
+"
+r = \\frac{covariance}{s_xs_y} = \\frac{1}{(n-1)} \\frac{\\sum_{i=1}^n (x_i - \\bar{x})(y_i - \\bar{y})}{s_x s_y}
+")  
 
 ``` r
 # compute the correlation coefficient
@@ -223,8 +244,9 @@ sprintf("correlation coefficient = %.2f", corXY)
     ## [1] "correlation coefficient = 0.97"
 
 The correlation coefficient is much more useful than the covariance
-because it only can vary between \(-1\) and 1. We interpret the
-magnitude of the relationship according to Cohen (1992):
+because it only can vary between
+![-1](https://latex.codecogs.com/png.latex?-1 "-1") and 1. We interpret
+the magnitude of the relationship according to Cohen (1992):
 
 **No linear relationship (“horizontal”):**
 
@@ -238,17 +260,21 @@ magnitude of the relationship according to Cohen (1992):
 
 **Negative linear relationship (“downhill”):**
 
-  - 0 \> r \> \(- 0.1\) indicates a medium negative linear relationship
-  - \(- 0.1\) \< r ≥ \(- 0.3\) indicates a medium negative linear
-    relationship
-  - r = \(- 1\) indicates a perfect negative linear relationship
+  - 0 \> r \> ![- 0.1](https://latex.codecogs.com/png.latex?-%200.1
+    "- 0.1") indicates a medium negative linear relationship
+  - ![- 0.1](https://latex.codecogs.com/png.latex?-%200.1 "- 0.1") \< r
+    ≥ ![- 0.3](https://latex.codecogs.com/png.latex?-%200.3 "- 0.3")
+    indicates a medium negative linear relationship
+  - r = ![- 1](https://latex.codecogs.com/png.latex?-%201 "- 1")
+    indicates a perfect negative linear relationship
 
 However, the r coefficient must be interpreted cautiously. Specifically,
 r = 0.97 should not be interpreted to mean that there is a 97 % of a
 relationship between the two variables. The correlation coefficient is
-simply a point on the scale between \(-1\) and 1, and the closer it is
-to either of those limits, the stronger is the relationship between the
-two variables (Howell, 2009).
+simply a point on the scale between
+![-1](https://latex.codecogs.com/png.latex?-1 "-1") and 1, and the
+closer it is to either of those limits, the stronger is the relationship
+between the two variables (Howell, 2009).
 
 You should also be aware of the fact that a specific correlation value
 could occur by chance even if there is no relationship. This is
@@ -284,7 +310,7 @@ cor.test(df$x,df$y)
 The test shows that - under the assumption that the null hypothesis of r
 = 0 is true - the likelihood of an r value this extreme or more is quite
 low (review the *p-value*). Therefore, we would reject the null
-hypothesis of \(r=0\).
+hypothesis of ![r=0](https://latex.codecogs.com/png.latex?r%3D0 "r=0").
 
 -----
 
@@ -304,9 +330,10 @@ of the data after ordering them, rather than on the data themselves;
 this is known as *Spearman’s correlation*.
 
 The Spearman correlation (also called Spearman’s rho or Spearman’s
-\(\rho\) ) is a measure of rank correlation. In particular, it assesses
-the statistical dependence between the rankings of two (at least ordinal
-scaled) variables.
+![\\rho](https://latex.codecogs.com/png.latex?%5Crho "\\rho") ) is a
+measure of rank correlation. In particular, it assesses the statistical
+dependence between the rankings of two (at least ordinal scaled)
+variables.
 
 An important difference between the correlation coefficient r and
 Spearman’s rho is that while Pearson’s correlation can only assess
@@ -441,7 +468,8 @@ cor.test(dfOne$x, dfOne$y)
     ##       cor 
     ## 0.9767259
 
-Spearman’s \(\rho\) for relationship
+Spearman’s ![\\rho](https://latex.codecogs.com/png.latex?%5Crho "\\rho")
+for relationship
     one:
 
 ``` r
@@ -479,7 +507,8 @@ cor.test(dfTwo$x, dfTwo$y)
     ##       cor 
     ## 0.8349383
 
-Spearman’s \(\rho\) for relationship
+Spearman’s ![\\rho](https://latex.codecogs.com/png.latex?%5Crho "\\rho")
+for relationship
     two:
 
 ``` r
@@ -517,7 +546,8 @@ cor.test(dfThree$x, dfThree$y)
     ##        cor 
     ## -0.8167063
 
-Spearman’s \(\rho\) for relationship
+Spearman’s ![\\rho](https://latex.codecogs.com/png.latex?%5Crho "\\rho")
+for relationship
     three:
 
 ``` r
@@ -555,7 +585,8 @@ cor.test(dfFour$x, dfFour$y)
     ##      cor 
     ## 0.206511
 
-Spearman’s \(\rho\) for relationship
+Spearman’s ![\\rho](https://latex.codecogs.com/png.latex?%5Crho "\\rho")
+for relationship
     four:
 
 ``` r
