@@ -1,5 +1,5 @@
 ---
-title: "Correlation"
+title: "Correlation Tutorial in R"
 author: "Prof. Dr. Jan Kirenz"
 output:
   github_document:
@@ -11,7 +11,7 @@ output:
     pandoc_args: --webtex
 ---
 
-```{r setup, include=TRUE}
+```{r setup, include=TRUE, message=FALSE}
 library(pander)
 library(tidyverse)
 library(ggplot2)
