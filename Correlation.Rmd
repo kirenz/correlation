@@ -1,12 +1,19 @@
 ---
 title: "Correlation"
 author: "Prof. Dr. Jan Kirenz"
-output: 
-  html_document:
-    md_extensions: +tex_math_dollars
-    html_preview: false
+output:
+  github_document:
     toc: true
     toc_depth: 3
+    fig_width: 5
+    fig_height: 5
+    html_preview: false
+    md_extensions: -tex_math_single_backslash
+#    md_extensions: +tex_math_dollars 
+#    includes:
+#      in_header: header.md
+#      before_body: doc_prefix.md
+#      after_body: doc_suffix.md
 ---
 
 ```{r setup, include=FALSE}
@@ -15,13 +22,13 @@ library(tidyverse)
 library(ggplot2)
 library(cowplot)
 panderOptions('round',2)
-panderOptions('digits',7)
+#panderOptions('digits',7)
 set.seed(123456) 
-knitr::opts_chunk$set(echo = FALSE)
+#knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-# 1. Introduction
+# Introduction
 
 Correlation is a way of measuring the extent to which two variables are related. This means we need to analyse whether as one variable increases, the other 
 
@@ -50,7 +57,7 @@ pander(df)
 
 ---
 
-# 2. Visual inspections with scatterplots 
+# Visual inspections with scatterplots 
 
 When we analyse the relationship between two variables, one of the most useful techniques for gaining a first insight into this relationship is a scatterplot. Check the illustration of the two variables to get an idea of the kind of relationship between them:
 
@@ -67,15 +74,13 @@ To get more information about the usage of scatterplots, review the chapter cova
 
 ---
 
-# 3. Covariance
+# Covariance
 
 One way to quantify the relationship between two variables is to calculate the *covariance*, which basically is a number that reflects the degree to which two variables vary together.
 
 Covariance is closely related to the *variance* (also referred to as $s^2$ or $\sigma^2$) of one variable. Remember, that the *variance* for a single variable is computed as:
 
-$$
-s^2 = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})^2
-$$
+$$s^2 = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})^2$$
 
 The variance tells us how far the observations are spread out from their average value. Let's obtain the variance of variable x and y for our example: 
 
@@ -148,7 +153,7 @@ Note that we don't usually use the covariance to describe relationships between 
 
 ---
 
-# 4. Pearson's correlation
+# Pearson's correlation
 
 Instead of calculating the *covariance*, we would usually use the *correlation coefficient r* (often referred to as *Pearson's correlation coefficient r* after the statistician Karl Pearson) to describe linear relationships between two numerical (at least intervall scaled) variables. It is important to note that the correlation coefficient can only assess linear relationships.
 
@@ -203,7 +208,7 @@ You should also be aware of the fact that a specific correlation value could occ
 
 ---
 
-# 5. Hypothesis testing for correlations
+# Hypothesis testing for correlations
 
 We can test the null hypothesis that the correlation is zero by converting a correlation value into a *t* statistic (the details are not important here).  
 
@@ -278,7 +283,7 @@ cor(dfOutlier$x, dfOutlier$y, method = "spearman")
 
 ---
 
-# 7. Visualization of different relationships
+# Visualization of different relationships
 
 
 ```{r}
