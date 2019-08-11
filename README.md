@@ -11,4 +11,4 @@ This can be done by calculating the covariance or correlation of two variables.
 In this [Correlation Tutorial in R](https://github.com/kirenz/correlation/blob/master/Correlation.md), we will use a small dataset to illustrate the concepts of covariance and correlation. You may also download the [Rmarkdown file](https://github.com/kirenz/correlation/blob/master/Correlation.Rmd) and open it in RStudio.
 
 
-Check your understanding with [multiple choice tasks](https://github.com/kirenz/correlation/blob/master/Correlation_task.pdf)
+Check your understanding with [multiple choice tasks](https://github.com/kirenz/correlation/blob/master/Correlation_task.pdf).
