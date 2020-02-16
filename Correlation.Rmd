@@ -1,0 +1,380 @@
+---
+title: "Correlation Tutorial in R"
+author: "Prof. Dr. Jan Kirenz"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+    fig_width: 8
+    fig_height: 8
+    html_preview: false
+    pandoc_args: --webtex
+---
+
+```{r setup, include=TRUE, message=FALSE}
+library(pander)
+library(tidyverse)
+library(ggplot2)
+panderOptions('round',2)
+set.seed(1) 
+```
+
+
+# Introduction
+
+Correlation is a way of measuring the extent to which two variables are related. This means we need to analyse whether as one variable increases, the other 
+
+(1) increases, 
+(2) decreases or 
+(3) stays the same. 
+
+This can be done by calculating the covariance or correlation of two variables. 
+
+We will use a small dataset to illustrate the concepts of covariance and correlation: Let's imagine we obtained purchase data from 5 different people. In particular, we collected information about how often they purchased products from company `x` and company `y` in the last month. 
+
+```{r, echo=FALSE}
+# create data for toy example of covariance
+df <- tibble(x = c(3, 5, 8, 10, 12), y= c(4, 7, 14, 13 , 18))
+pander(df)
+```
+
+*Notational conventions*:
+
+- *n* represents the number of distinct data points, or observations, in our sample. 
+
+- *p* denotes the number of variables that are available in the dataset. 
+
+- $x_{ij}$ represents the value of the j*th* variable for the i*th* observation, where i = 1, 2, . . ., n and j = 1, 2, . . . , p. 
+
+
+---
+
+# Visual inspections with scatterplots 
+
+When we analyse the relationship between two variables, one of the most useful techniques for gaining a first insight into this relationship is a scatterplot. Check the illustration of the two variables to get an idea of the kind of relationship between them:
+
+```{r}
+coords = paste(df$x,df$y,sep=",")
+ggplot(df) +
+  geom_point(aes(x,y)) +
+  geom_label(aes(x+.5,y+0.5,label=coords))
+```
+
+In this scatterplot, each person in the dataset is represented by a point in two-dimensional space. The coordinates of this point ($x_{ij}$,$y_{ij}$) are the individual’s scores on variables x and y respectively.
+
+To get more information about the usage of scatterplots, review the chapter covariance in [Grolemund and Wickham (2016)](https://r4ds.had.co.nz/exploratory-data-analysis.html#covariation)
+
+---
+
+# Covariance
+
+One way to quantify the relationship between two variables is to calculate the *covariance*, which basically is a number that reflects the degree to which two variables vary together.
+
+Covariance is closely related to the *variance* (also referred to as $s^2$ or $\sigma^2$) of one variable. Remember, that the *variance* for a single variable is computed as:
+
+$$s^2 = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})^2$$
+
+The variance tells us how far the observations are spread out from their average value. Let's obtain the variance of variable x and y for our example: 
+
+1) calculate the mean,
+2) determine the deviation of every observation from the mean,
+3) calculate the square of the deviations,
+4) sum up the squared deviations,
+5) devide the sum of squared deviations by (n-1).
+
+The results from step 1 to 3 are illustrated in this table:
+```{r, echo=FALSE}
+# create data for example of covariance
+df <- df %>%
+  mutate(
+    x_mean = mean(x),
+    y_mean = mean(y),
+    x_dev = x - mean(x),
+    y_dev = y - mean(y),
+    x_dev_sq = x_dev^2,
+    y_dev_sq = y_dev^2  
+  ) 
+
+pander(df)
+```
+
+Now we are able to calculate the variance of both variables (step 4 and 5):
+
+```{r}
+# compute the variance 
+var_x <- (sum(df$x_dev_sq) / 4)
+var_y <-  (sum(df$y_dev_sq) / 4)
+
+sprintf("variance of x  = %.2f", var_x)
+sprintf("variance of y  = %.2f", var_y)
+```
+
+In contrast to variance, the *covariance* ($cov_{XY}$) tells us whether there is a relation between the deviations of *two* different variables across  observations. It is defined as:
+
+$$
+covariance = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})
+$$
+
+This value will be far from zero when x and y are both highly deviant from the mean: 
+
+- if they are deviant in the same direction then the covariance is positive, whereas 
+
+- if they are deviant in opposite directions the covariance is negative.  
+
+To be able to determine the covariance, we first need to calculate the crossproduct of `x_dev` and `y_def`:
+
+```{r, echo=FALSE}
+df <- df %>%
+  mutate(crossproduct = y_dev * x_dev)
+
+pander(df)
+```
+
+Finally, we can determine the covariance:
+
+```{r}
+# compute covariance
+sprintf("sum of cross products = %.2f", sum(df$crossproduct))
+covXY <- sum(df$crossproduct) / (nrow(df) - 1)
+sprintf("covariance: %.2f", covXY)
+```
+
+Note that we don't usually use the covariance to describe relationships between variables, because it strongly depends upon the standard deviation of the variables. For example, a value of $cov_{XY}=1$ might reflect a high degree of correlation when the standard deviations are very small, but a low degree of correlation when the standard deviations are high (Howell, 2009). This makes the covariance hard to interpret.
+
+---
+
+# Pearson's correlation
+
+Instead of calculating the *covariance*, we would usually use the *correlation coefficient r* (often referred to as *Pearson's correlation coefficient r* after the statistician Karl Pearson) to describe linear relationships between two numerical (at least intervall scaled) variables. It is important to note that the correlation coefficient can only assess linear relationships.
+
+The correlation coefficent r is computed by standardising the covariance by the standard deviations of the two variables (i.e. divide by the standard deviations of both variables). 
+
+Remember that the standard deviation is simply the positive square root of the variance:  
+
+```{r}
+# compute the variance 
+sd_x <- sqrt(sum(df$x_dev_sq) / 4)
+sd_y <-  sqrt(sum(df$y_dev_sq) / 4)
+
+sprintf("standard deviation of x   = %.2f", sd_x)
+sprintf("standard deviation of y  = %.2f", sd_y)
+```
+
+The correlation coefficient r is calculated as follows:
+
+$$
+r = \frac{covariance}{s_xs_y} = \frac{1}{(n-1)} \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{s_x s_y}
+$$
+
+```{r}
+# compute the correlation coefficient
+
+corXY <- sum(df$crossproduct) / ((nrow(df) - 1) * sd(df$x) * sd(df$y))
+corXY_per = round(corXY*100)
+sprintf("correlation coefficient = %.2f", corXY)
+```
+
+The correlation coefficient is much more useful than the covariance because it only can vary between $-1$ and 1. We interpret the magnitude of the relationship according to Cohen (1992): 
+
+**No linear relationship ("horizontal"):**
+
+- r = 0 indicates no linear relationship.
+
+**Positive linear relationship ("uphill"):**
+
+- 0 < r ≤ 0.1 indicates a small positive linear relationship 
+- 0.1 < r ≤ 0.3 indicates a medium positive linear relationship 
+- r = 1 indicates a perfect positive linear relationship
+
+**Negative linear relationship ("downhill"):**
+
+- 0 > r > $- 0.1$ indicates a medium negative linear relationship 
+- $- 0.1$ < r ≥ $- 0.3$ indicates a medium negative linear relationship 
+- r = $- 1$ indicates a perfect negative linear relationship
+
+However, the r coefficient must be interpreted cautiously. Specifically, r = `r I(round(corXY,2))` should not be interpreted to mean that there is a `r I(corXY_per)` %  of a relationship between the two variables. The correlation coefficient is simply a point on the scale between $-1$ and 1, and the closer it is to either of those limits, the stronger is the relationship between the two variables (Howell, 2009).
+
+You should also be aware of the fact that a specific correlation value could occur by chance even if there is no relationship. This is especially true, if you have a small sample size. Therefore, we need a second measure to investigate the statistical significance of the relationship.   
+
+---
+
+# Hypothesis testing for correlations
+
+We can test the null hypothesis that the correlation is zero by converting a correlation value into a *t* statistic (the details are not important here).  
+
+```{r}
+cor.test(df$x,df$y) 
+```
+
+The test shows that - under the assumption that the null hypothesis of r = 0 is true - the likelihood of an r value this extreme or more is quite low (review the *p-value*). Therefore, we would reject the null hypothesis of $r=0$. 
+
+---
+
+# 6. Spearman's correlation
+
+One common problem with the standard correlation coefficient is that this measure is very sensitive to outliers. For example, in the figure below, we can see how a single outlying data point can cause a very high positive correlation value, even when the actual relationship between the other data points is perfectly negative.
+
+```{r outlierCorr, echo=FALSE,fig.cap="An simulated example of the effects of outliers on correlation.  Without the outlier the remainder of the datapoints have a perfect negative correlation, but the single outlier changes the correlation value to highly positive (Poldrack, 2019).",fig.width=4,fig.height=4,out.height='50%'}
+n <- 10
+set.seed(1234)
+
+dfOutlier <-
+  data.frame(x = rnorm(n)) %>%
+  mutate(y = x * -1)
+
+dfOutlier$x[1] <- 10
+dfOutlier$y[1] <- 10
+cc <- cor(dfOutlier$x, dfOutlier$y)
+ccSpearman <- cor(dfOutlier$x, dfOutlier$y, method = "spearman")
+
+p <- ggplot(dfOutlier, aes(x, y)) +
+  geom_point() +
+  ggtitle(sprintf("r = %0.2f (without outlier: r = %.2f)", cc, cor(dfOutlier$x[2:n], dfOutlier$y[2:n]))) +
+  theme(plot.title = element_text(size = 16, face = "bold")) +
+  theme(plot.margin = unit(c(0, 1, 0, 0), "cm")) +
+  labs(
+    x = "variable x",
+    y = "variable y"
+  )
+print(p)
+```
+
+One way to address outliers is to compute the correlation on the *ranks* of the data after ordering them, rather than on the data themselves; this is known as *Spearman's correlation*.  
+
+The Spearman correlation (also called Spearman's rho or Spearman's $\rho$ ) is a  measure of rank correlation. In particular, it assesses the statistical dependence between the rankings of two (at least ordinal scaled) variables. 
+
+An important difference between the correlation coefficient r and Spearman's rho is that while Pearson's correlation can only assess linear relationships, Spearman's rank correlation assesses *monotonic relationships* (whether linear or not). A monotonic relationship between two variables is a relationship where:
+
+- as the value of one variable increases, so does the value of the other variable (positive relationship), or 
+
+- as the value of one variable increases, the other variable value decreases (negative relationship).
+
+For our example dataset, the ranked data and the corresponding Spearman's rho is as follows:
+
+```{r, echo=FALSE}
+dfSpear <- df %>% 
+  mutate(rank_x = c(1, 2, 3, 4, 5), rank_y = c(1, 2, 4, 3, 5) )
+pander(dfSpear)
+```
+
+
+```{r}
+cor.test(df$x, df$y, method = "spearman")
+```
+
+In the case of the previous example with one outlier, the Spearman correlation is -0.45 instead of r = 0.83, showing that the rank correlation reduces the effect of the outlier:
+
+```{r}
+cor(dfOutlier$x, dfOutlier$y, method = "spearman")
+```
+
+
+---
+
+# Visualization of different relationships
+
+
+```{r}
+library(cowplot)
+
+par(mfrow=c(2,2))
+
+# Relationship one
+dfOne <-
+  tibble(x = round(rnorm(n = 100, mean = 50, sd = 10))) %>%
+  mutate(y = x + round(rnorm(n = 100, mean = 0, sd = 2)))
+
+p1 <- ggplot(dfOne) +
+  geom_point(aes(x,y)) +
+  ggtitle("Relationship one") +
+  theme(plot.title = element_text(size = 12)) 
+
+# Relationship two
+dfTwo <-
+  tibble(x = round(rnorm(n = 100, mean = 10, sd = 3))) %>%
+  mutate(y = 1  + 0.1*x^2 - 0.2*x^3 + 0.1*x^4)#  + round(rnorm(n = 100, mean = 0, sd = 2)))
+
+p2 <- ggplot(dfTwo) +
+  geom_point(aes(x,y)) +
+  ggtitle("Relationship two") +
+  theme(plot.title = element_text(size = 12)) 
+
+# Relationship three
+dfThree <-
+  tibble(x = round(rnorm(n = 100, mean = 10, sd = 3))) %>%
+  mutate(y = 100 - 0.2*x - 0.2*x^2 - 0.1*x^5) #+ round(rnorm(n = 100, mean = 5, sd = 10)))
+
+p3 <- ggplot(dfThree) +
+  geom_point(aes(x,y)) +
+  ggtitle("Relationship three") +
+  theme(plot.title = element_text(size = 12)) 
+
+# Relationship four
+dfFour <-
+  tibble(x = round(rnorm(n = 100, mean = 0, sd = 10))) %>%
+  mutate(y = 1 + 1*x - 0.2*x^2) #+ round(rnorm(n = 100, mean = 5, sd = 10)))
+
+p4 <- ggplot(dfFour) +
+  geom_point(aes(x,y)) +
+  ggtitle("Relationship four") +
+  theme(plot.title = element_text(size = 12)) 
+
+plot_grid(p1, p2, p3, p4, labels = "AUTO")
+```
+
+
+Please find below the correlation results (correlation coefficient r as well as Sperman's correlation) for the different relationships. 
+
+Correlation coefficient r for relationship one:
+```{r}
+cor.test(dfOne$x, dfOne$y)
+```
+
+Spearman's $\rho$ for relationship one:
+```{r}
+cor.test(dfOne$x, dfOne$y, method="spearman")
+```
+
+
+Correlation coefficient r for relationship two:
+```{r}
+cor.test(dfTwo$x, dfTwo$y)
+```
+
+Spearman's $\rho$ for relationship two:
+```{r}
+cor.test(dfTwo$x, dfTwo$y, method="spearman")
+```
+
+Correlation coefficient r for relationship three:
+```{r}
+cor.test(dfThree$x, dfThree$y)
+```
+
+Spearman's $\rho$ for relationship three:
+```{r}
+cor.test(dfThree$x, dfThree$y, method="spearman")
+```
+
+Correlation coefficient r for relationship four:
+```{r}
+cor.test(dfFour$x, dfFour$y)
+```
+
+Spearman's $\rho$ for relationship four:
+```{r}
+cor.test(dfFour$x, dfFour$y, method="spearman")
+```
+
+
+
+# Literature
+
+[Cohen, J. (1992). A power primer. Psychological bulletin, 112(1), p. 155.](https://www.ime.usp.br/~abe/lista/pdfn45sGokvRe.pdf)	
+
+Howell, D. C. (2009). Statistical methods for psychology. Cengage Learning.
+
+[Poldrack, R. A. (2019). Statistical Thinking for the 21st Century (Draft: 2019-04-06). GitHub](http://statsthinking21.org/)
+
+[Wickham, H., & Grolemund, G. (2016). R for data science: import, tidy, transform, visualize, and model data. O'Reilly Media, Inc.](https://r4ds.had.co.nz) 
+
