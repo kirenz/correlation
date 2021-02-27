@@ -1,26 +1,25 @@
 ---
-title: "Correlation Tutorial in R"
-author: "Prof. Dr. Jan Kirenz"
-output:
-  github_document:
-    toc: true
-    toc_depth: 3
-    fig_width: 8
-    fig_height: 8
-    html_preview: false
-    pandoc_args: --webtex
+title: "Correlation Tutorial"
+author: Jan Kirenz
+output: learnr::tutorial
+runtime: shiny_prerendered
 ---
 
-```{r setup, include=TRUE, message=FALSE}
+```{r setup, include=FALSE}
+
 library(pander)
+library(learnr)
 library(tidyverse)
 library(ggplot2)
+library(cowplot)
 panderOptions('round',2)
-set.seed(1) 
+panderOptions('digits',7)
+set.seed(123456) 
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-# Introduction
+## Introduction
 
 Correlation is a way of measuring the extent to which two variables are related. This means we need to analyse whether as one variable increases, the other 
 
@@ -46,10 +45,40 @@ pander(df)
 
 - $x_{ij}$ represents the value of the j*th* variable for the i*th* observation, where i = 1, 2, . . ., n and j = 1, 2, . . . , p. 
 
+Please answer the following questions to verify that you understand the notational conventions.
+ 
+### Multiple choice
 
----
+Multiple choice questions:
 
-# Visual inspections with scatterplots 
+```{r notation}
+quiz(
+  question("How many distinct data points n does our sample contain?",
+    answer("1"),
+    answer("2"),
+    answer("3"),
+    answer("4"),
+    answer("5", correct = TRUE)
+  ),
+  question("How many variables p does our dataset contain?",
+    answer("1"),
+    answer("2", correct = TRUE),
+    answer("3"),
+    answer("4"),
+    answer("5")
+  ),
+  question("What is the value of  $x_{21}$?",
+    answer("3"),
+    answer("4"),
+    answer("5", correct = TRUE),
+    answer("7"),
+    answer("8")
+  )
+)
+```
+
+
+## Visual inspections with scatterplots 
 
 When we analyse the relationship between two variables, one of the most useful techniques for gaining a first insight into this relationship is a scatterplot. Check the illustration of the two variables to get an idea of the kind of relationship between them:
 
@@ -64,15 +93,35 @@ In this scatterplot, each person in the dataset is represented by a point in two
 
 To get more information about the usage of scatterplots, review the chapter covariance in [Grolemund and Wickham (2016)](https://r4ds.had.co.nz/exploratory-data-analysis.html#covariation)
 
----
+### Multiple choice
 
-# Covariance
+*Answer the following questions to verify that you understand the relationship between x and y*
+
+```{r coordinates}
+quiz(
+   question("The relationship between variable x and y seems to be...",
+    answer("positive (uphill)", correct = TRUE),
+    answer("negative (downhill)"),
+    answer("zero (horizontal)")
+  ),
+  question("If variable x increases, variable y... ",
+    answer("increases (uphill)", correct = TRUE),
+    answer("decreases (downhill)"),
+    answer("stays the same (horizontal)")
+  )
+)
+```
+
+
+## Covariance
 
 One way to quantify the relationship between two variables is to calculate the *covariance*, which basically is a number that reflects the degree to which two variables vary together.
 
 Covariance is closely related to the *variance* (also referred to as $s^2$ or $\sigma^2$) of one variable. Remember, that the *variance* for a single variable is computed as:
 
-$$s^2 = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})^2$$
+$$
+s^2 = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})^2
+$$
 
 The variance tells us how far the observations are spread out from their average value. Let's obtain the variance of variable x and y for our example: 
 
@@ -84,7 +133,7 @@ The variance tells us how far the observations are spread out from their average
 
 The results from step 1 to 3 are illustrated in this table:
 ```{r, echo=FALSE}
-# create data for example of covariance
+# create data for toy example of covariance
 df <- df %>%
   mutate(
     x_mean = mean(x),
@@ -93,7 +142,8 @@ df <- df %>%
     y_dev = y - mean(y),
     x_dev_sq = x_dev^2,
     y_dev_sq = y_dev^2  
-  ) 
+  ) #%>%
+#  mutate(crossproduct = y_dev * x_dev)
 
 pander(df)
 ```
@@ -124,6 +174,7 @@ This value will be far from zero when x and y are both highly deviant from the m
 To be able to determine the covariance, we first need to calculate the crossproduct of `x_dev` and `y_def`:
 
 ```{r, echo=FALSE}
+# create data for toy example of covariance
 df <- df %>%
   mutate(crossproduct = y_dev * x_dev)
 
@@ -141,9 +192,7 @@ sprintf("covariance: %.2f", covXY)
 
 Note that we don't usually use the covariance to describe relationships between variables, because it strongly depends upon the standard deviation of the variables. For example, a value of $cov_{XY}=1$ might reflect a high degree of correlation when the standard deviations are very small, but a low degree of correlation when the standard deviations are high (Howell, 2009). This makes the covariance hard to interpret.
 
----
-
-# Pearson's correlation
+## Pearson's correlation
 
 Instead of calculating the *covariance*, we would usually use the *correlation coefficient r* (often referred to as *Pearson's correlation coefficient r* after the statistician Karl Pearson) to describe linear relationships between two numerical (at least intervall scaled) variables. It is important to note that the correlation coefficient can only assess linear relationships.
 
@@ -196,21 +245,19 @@ However, the r coefficient must be interpreted cautiously. Specifically, r = `r 
 
 You should also be aware of the fact that a specific correlation value could occur by chance even if there is no relationship. This is especially true, if you have a small sample size. Therefore, we need a second measure to investigate the statistical significance of the relationship.   
 
----
-
-# Hypothesis testing for correlations
+### Hypothesis testing for correlations
 
 We can test the null hypothesis that the correlation is zero by converting a correlation value into a *t* statistic (the details are not important here).  
 
 ```{r}
+# perform correlation test on data
 cor.test(df$x,df$y) 
 ```
 
 The test shows that - under the assumption that the null hypothesis of r = 0 is true - the likelihood of an r value this extreme or more is quite low (review the *p-value*). Therefore, we would reject the null hypothesis of $r=0$. 
 
----
 
-# 6. Spearman's correlation
+## Spearman's correlation
 
 One common problem with the standard correlation coefficient is that this measure is very sensitive to outliers. For example, in the figure below, we can see how a single outlying data point can cause a very high positive correlation value, even when the actual relationship between the other data points is perfectly negative.
 
@@ -252,6 +299,7 @@ An important difference between the correlation coefficient r and Spearman's rho
 For our example dataset, the ranked data and the corresponding Spearman's rho is as follows:
 
 ```{r, echo=FALSE}
+# create data for toy example of covariance
 dfSpear <- df %>% 
   mutate(rank_x = c(1, 2, 3, 4, 5), rank_y = c(1, 2, 4, 3, 5) )
 pander(dfSpear)
@@ -269,13 +317,10 @@ cor(dfOutlier$x, dfOutlier$y, method = "spearman")
 ```
 
 
----
-
-# Visualization of different relationships
+### Multiple choice
 
 
 ```{r}
-library(cowplot)
 
 par(mfrow=c(2,2))
 
@@ -300,6 +345,7 @@ p2 <- ggplot(dfTwo) +
   theme(plot.title = element_text(size = 12)) 
 
 # Relationship three
+
 dfThree <-
   tibble(x = round(rnorm(n = 100, mean = 10, sd = 3))) %>%
   mutate(y = 100 - 0.2*x - 0.2*x^2 - 0.1*x^5) #+ round(rnorm(n = 100, mean = 5, sd = 10)))
@@ -310,6 +356,7 @@ p3 <- ggplot(dfThree) +
   theme(plot.title = element_text(size = 12)) 
 
 # Relationship four
+
 dfFour <-
   tibble(x = round(rnorm(n = 100, mean = 0, sd = 10))) %>%
   mutate(y = 1 + 1*x - 0.2*x^2) #+ round(rnorm(n = 100, mean = 5, sd = 10)))
@@ -320,8 +367,53 @@ p4 <- ggplot(dfFour) +
   theme(plot.title = element_text(size = 12)) 
 
 plot_grid(p1, p2, p3, p4, labels = "AUTO")
+
 ```
 
+*Please answer the following questions.*
+
+Multiple choice questions with more than one correct answer:
+
+```{r relationships}
+quiz(
+   question("Relationship one is...",
+    answer("positive", correct = TRUE),
+    answer("negative"),
+    answer("zero"),
+    answer("linear", correct = TRUE),
+    answer("non-linear"),
+    answer("monotonic", correct = TRUE),
+    answer("non-monotonic")
+    ),
+  question("Relationship two is ...",
+    answer("positive", correct = TRUE),
+    answer("negative"),
+    answer("zero"),
+    answer("linear"),
+    answer("non-linear", correct = TRUE),
+    answer("monotonic", correct = TRUE),
+    answer("non-monotonic")
+    ),
+  question("Relationship three is ...",
+    answer("positive"),
+    answer("negative", correct = TRUE),
+    answer("zero"),
+    answer("linear"),
+    answer("non-linear", correct = TRUE),
+    answer("monotonic", correct = TRUE),
+    answer("non-monotonic")
+    ),
+  question("Relationship four is ...",
+    answer("linear"),
+    answer("non-linear", correct = TRUE),
+    answer("monotonic"),
+    answer("non-monotonic", correct = TRUE)
+  )
+)
+```
+
+
+### Multiple Choice 
 
 Please find below the correlation results (correlation coefficient r as well as Sperman's correlation) for the different relationships. 
 
@@ -367,8 +459,38 @@ cor.test(dfFour$x, dfFour$y, method="spearman")
 ```
 
 
+*Choose the right test (according to the identified relationship in the illustrations).*
 
-# Literature
+Multiple choice questions with one correct answer:
+
+```{r correlationcoeff}
+quiz(
+   question('Relationship one',
+    answer("Pearson's correlation", correct = TRUE),
+    answer("Spearman's correlation"),
+    answer("Neither")
+    ),
+ question("Relationship two",
+    answer("Pearson's correlation"),
+    answer("Spearman's correlation", correct = TRUE),
+    answer("Neither")
+    ),
+  question("Relationship three",
+    answer("Pearson's correlation"),
+    answer("Spearman's correlation", correct = TRUE),
+    answer("Neither")
+    ),
+  question("Relationship four",
+    answer("Pearson's correlation"),
+    answer("Spearman's correlation"),
+    answer("Neither", correct = TRUE)
+  )
+)
+```
+
+
+
+## Literature
 
 [Cohen, J. (1992). A power primer. Psychological bulletin, 112(1), p. 155.](https://www.ime.usp.br/~abe/lista/pdfn45sGokvRe.pdf)	
 
